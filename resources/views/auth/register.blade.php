@@ -122,7 +122,7 @@
                     equalTo: "#password"
                 }
             },
-            
+            messages: {
                 name: {
                     required: "Please enter your name.",
                     minlength: "Name must be at least 3 characters long."
