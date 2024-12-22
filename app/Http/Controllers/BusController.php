@@ -180,7 +180,7 @@ class BusController extends Controller
         ->where('id', $busId)
         ->decrement('available_seat', $validatedData['ticket_count']);
 
-    // Get the newly added booking details
+    // Get the newly added booking detailss
     $newBooking = DB::table('user_booking_details')
         ->where('id', $booking)
         ->first();
