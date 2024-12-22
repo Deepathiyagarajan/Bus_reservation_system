@@ -134,7 +134,7 @@
 
 <script>
     $(document).ready(function() {
-        // Handle form submission via AJAX
+        // Handle form submission via AJAXx
         $('#busForm').on('submit', function(e) {
             e.preventDefault();
 
