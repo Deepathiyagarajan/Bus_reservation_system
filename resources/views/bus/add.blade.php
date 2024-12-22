@@ -90,60 +90,84 @@
         }
     </style>
 
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between">
-                        <span>Add Bus</span>
-                        <a href="{{ route('home') }}" class="btn btn-danger">Back</a>
-                    </div>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between">
+                    <span>Add Bus</span>
+                    <a href="{{ route('home') }}" class="btn btn-danger">Back</a>
+                </div>
 
-                    <div class="card-body">
-                        @if ($errors->any())
-                            <div class="alert alert-danger">
-                                <ul>
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
+                <div class="card-body">
+                    <div id="error-message" class="alert alert-danger" style="display: none;"></div>
 
-                        <form method="POST" action="{{ route('bus.store') }}" autocomplete="off" id="busForm">
-                            @csrf
+                    <form id="busForm" method="POST" autocomplete="off">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="bus_name" class="form-label">Bus Name</label>
+                            <input type="text" class="form-control" id="bus_name" name="bus_name" required>
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="bus_name" class="form-label">Bus Name</label>
-                                <input type="text" class="form-control" id="bus_name" name="bus_name"
-                                    value="{{ old('bus_name') }}" required>
-                            </div>
+                        <div class="mb-3">
+                            <label for="available_seats" class="form-label">Available Seats</label>
+                            <input type="number" class="form-control" id="available_seats" name="available_seats" required min="1">
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="available_seats" class="form-label">Available Seats</label>
-                                <input type="number" class="form-control" id="available_seats" name="available_seats"
-                                    value="{{ old('available_seats') }}" required min="1">
-                            </div>
+                        <div class="mb-3">
+                            <label for="from" class="form-label">From</label>
+                            <input type="text" class="form-control" id="from" name="from" required>
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="from" class="form-label">From</label>
-                                <input type="text" class="form-control" id="from" name="from"
-                                    value="{{ old('from') }}" required>
-                            </div>
+                        <div class="mb-3">
+                            <label for="to_address" class="form-label">To</label>
+                            <input type="text" class="form-control" id="to_address" name="to_address" required>
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="to_address" class="form-label">To</label>
-                                <input type="text" class="form-control" id="to_address" name="to_address"
-                                    value="{{ old('to_address') }}" required>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary w-100">Add Bus</button>
-                        </form>
-                    </div>
+                        <button type="submit" class="btn btn-primary w-100">Add Bus</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // Handle form submission via AJAX
+        $('#busForm').on('submit', function(e) {
+            e.preventDefault();
+
+            var formData = new FormData(this); // Collect form data
+
+            $.ajax({
+                url: '{{ route('bus.store') }}',  // Make sure this route is correct
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        // Redirect to home or show a success message
+                        window.location.href = '{{ route('home') }}'; // Or you can show a message here
+                    } else {
+                        $('#error-message').text(response.message).show();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Display server-side validation errors or AJAX errors
+                    var errors = xhr.responseJSON.errors;
+                    var errorMessage = '';
+                    $.each(errors, function(key, value) {
+                        errorMessage += value[0] + '<br>';
+                    });
+                    $('#error-message').html(errorMessage).show();
+                }
+            });
+        });
+    });
+</script>
+
 
     <script>
         $(document).ready(function() {

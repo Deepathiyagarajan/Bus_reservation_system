@@ -136,7 +136,7 @@
                                         <h5>{{ $bus->bus_name }}</h5>
                                         <p>{{ $bus->from }} -> {{ $bus->to }}</p>
                                     </div>
-                                    
+
                                     <div>
                                         <a href="{{ route('bus.show', $bus->id) }}" class="btn btn-info btn-sm">View</a>
                                         <a href="{{ route('bus.edit', $bus->id) }}" class="btn btn-warning btn-sm">Edit</a>

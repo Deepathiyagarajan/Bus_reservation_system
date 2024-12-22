@@ -84,89 +84,106 @@
         }
     </style>
 
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <span>Edit Bus Details</span>
-                        <a href="{{ route('bus.view') }}" class="btn btn-danger btn-sm">Back</a>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Edit Bus Details</span>
+                    <a href="{{ route('bus.view') }}" class="btn btn-danger btn-sm">Back</a>
+                </div>
+
+                <div class="card-body">
+                    <!-- Displaying Errors -->
+                    <div id="error-messages" class="alert alert-danger" style="display: none;">
+                        <ul id="error-list"></ul>
                     </div>
 
-                    <div class="card-body">
-                        @if ($errors->any())
-                            <div class="alert alert-danger">
-                                <ul>
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
+                    <form id="busForm" method="POST" action="{{ route('bus.update', $bus->id) }}">
+                        @csrf
+                        @method('POST')
 
-                        <form method="POST" action="{{ route('bus.update', $bus->id) }}" id="busForm">
-                            @csrf
-                            @method('POST')
+                        <input type="text" name="id" id="id" value="{{ $bus->id }}" hidden>
 
-                            <input type="text" name="id" id="id" value="{{$bus->id}}" hidden>
-
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="bus_name" class="form-label">{{ __('Bus Name') }}</label>
-                                    <input id="bus_name" type="text" class="form-control @error('bus_name') is-invalid @enderror" name="bus_name" value="{{ old('bus_name', $bus->bus_name) }}" required autofocus>
-                                    @error('bus_name')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label for="total_seat" class="form-label">{{ __('Total Seats') }}</label>
-                                    <input id="total_seat" type="number" class="form-control @error('total_seat') is-invalid @enderror" name="total_seat" value="{{ old('total_seat', $bus->total_seat) }}" required>
-                                    @error('total_seat')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="bus_name" class="form-label">{{ __('Bus Name') }}</label>
+                                <input id="bus_name" type="text" class="form-control" name="bus_name" value="{{ old('bus_name', $bus->bus_name) }}" required autofocus>
                             </div>
 
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="from" class="form-label">{{ __('From') }}</label>
-                                    <input id="from" type="text" class="form-control @error('from') is-invalid @enderror" name="from" value="{{ old('from', $bus->from) }}" required>
-                                    @error('from')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
+                            <div class="col-md-6">
+                                <label for="total_seat" class="form-label">{{ __('Total Seats') }}</label>
+                                <input id="total_seat" type="number" class="form-control" name="total_seat" value="{{ old('total_seat', $bus->total_seat) }}" required>
+                            </div>
+                        </div>
 
-                                <div class="col-md-6">
-                                    <label for="to" class="form-label">{{ __('To') }}</label>
-                                    <input id="to" type="text" class="form-control @error('to') is-invalid @enderror" name="to" value="{{ old('to', $bus->to) }}" required>
-                                    @error('to')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="from" class="form-label">{{ __('From') }}</label>
+                                <input id="from" type="text" class="form-control" name="from" value="{{ old('from', $bus->from) }}" required>
                             </div>
 
-                            <div class="row mb-0">
-                                <div class="col-md-8 offset-md-4">
-                                    <button type="submit" class="btn btn-primary">
-                                        {{ __('Update Bus') }}
-                                    </button>
-                                </div>
+                            <div class="col-md-6">
+                                <label for="to" class="form-label">{{ __('To') }}</label>
+                                <input id="to" type="text" class="form-control" name="to" value="{{ old('to', $bus->to) }}" required>
                             </div>
-                        </form>
-                    </div>
+                        </div>
+
+                        <div class="row mb-0">
+                            <div class="col-md-8 offset-md-4">
+                                <button type="submit" class="btn btn-primary">
+                                    {{ __('Update Bus') }}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#busForm').on('submit', function(e) {
+            e.preventDefault();  // Prevent normal form submission
+
+            // Clear any previous error messages
+            $('#error-messages').hide();
+            $('#error-list').empty();
+
+            var formData = $(this).serialize();  // Serialize form data
+
+            $.ajax({
+                url: $(this).attr('action'),
+                method: 'POST',
+                data: formData,
+                success: function(response) {
+                    if (response.success) {
+                        // Handle successful form submission
+                        alert('Bus details updated successfully!');
+                        window.location.href = '{{ route('bus.view') }}';  // Redirect after success
+                    }
+                },
+                error: function(xhr) {
+                    // If there are validation errors, show them
+                    var errors = xhr.responseJSON.errors;
+                    if (errors) {
+                        $('#error-messages').show();
+                        for (var field in errors) {
+                            errors[field].forEach(function(message) {
+                                $('#error-list').append('<li>' + message + '</li>');
+                            });
+                        }
+                    } else {
+                        alert('An error occurred while updating bus details.');
+                    }
+                }
+            });
+        });
+    });
+</script>
+
 
     <script>
         $(document).ready(function() {
