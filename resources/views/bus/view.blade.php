@@ -4,7 +4,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
     <style>
-        /* Custom Styles */
         .card {
             border-radius: 12px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
@@ -84,13 +83,11 @@
             color: #777;
         }
 
-        /* Error and Success Messages */
         .alert {
             border-radius: 12px;
             margin-bottom: 20px;
         }
 
-        /* Small screen adjustment */
         @media (max-width: 576px) {
             .card-body {
                 padding: 1.5rem;
@@ -117,7 +114,6 @@
                     </div>
 
                     <div class="card-body">
-                        <!-- Displaying Errors -->
                         @if (session('error'))
                             <div class="alert alert-danger">{{ session('error') }}</div>
                         @endif
@@ -125,7 +121,6 @@
                         @if (session('success'))
                             <div class="alert alert-success">{{ session('success') }}</div>
                         @endif
-
 
                         <h3 class="mb-4">List of Buses</h3>
 
@@ -135,6 +130,7 @@
                                     <div>
                                         <h5>{{ $bus->bus_name }}</h5>
                                         <p>{{ $bus->from }} -> {{ $bus->to }}</p>
+                                        <p>Price: {{ $bus->price }}</p>
                                     </div>
 
                                     <div>

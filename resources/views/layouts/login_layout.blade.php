@@ -5,41 +5,47 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-    <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <!-- Custom CSS -->
+
     <style>
         body {
-            background-color: #f8f9fa;
-            /* Light background */
+            background: url('{{ asset('storage/images/Bus-Online-Booking-System.jpg') }}') no-repeat center center fixed;
+            background-size: cover;
             font-family: 'Nunito', sans-serif;
+            color: #ffffff;
+        }
+
+        .blur-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            filter: blur(8px);
+            z-index: -1;
         }
 
         .navbar {
-            background-color: #007bff;
-            /* Primary color */
+            background-color: rgba(0, 123, 255, 0.8);
         }
 
         .navbar-brand,
         .nav-link {
             color: #ffffff !important;
-            /* White text for navbar links */
             font-weight: bold;
         }
 
         .nav-link:hover {
             color: #f8f9fa !important;
-            /* Slightly lighter text on hover */
             text-decoration: underline;
         }
 
@@ -49,7 +55,6 @@
 
         .dropdown-item:hover {
             background-color: #0056b3;
-            /* Darker blue for hover */
             color: #ffffff;
         }
 
@@ -62,34 +67,36 @@
         }
     </style>
 
-    <!-- Scripts -->
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body>
+    <div class="blur-background"></div>
+
     <div id="app">
-        <!-- Navbar -->
+
         <nav class="navbar navbar-expand-md shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ route('home') }}">
-                     Bus Ticket Booking
+                     Welcome!!! To Bus Ticket Booking
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+                    aria-expanded="false" aria-label=Toggle navigation>
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
             </div>
         </nav>
 
-        <!-- Main Content -->
+
         <main class="py-4">
             @yield('content')
         </main>
     </div>
 
-    <!-- Bootstrap JS -->
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
     </script>

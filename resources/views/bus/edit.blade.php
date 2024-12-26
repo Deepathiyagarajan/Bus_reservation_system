@@ -3,12 +3,10 @@
 @section('content')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
-    <!-- Include jQuery and jQuery Validation Plugin -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
 
     <style>
-        /* Custom Styles */
         .card {
             border-radius: 12px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
@@ -67,7 +65,6 @@
             margin-bottom: 20px;
         }
 
-        /* Mobile responsiveness */
         @media (max-width: 576px) {
             .card-body {
                 padding: 1.5rem;
@@ -94,7 +91,7 @@
                 </div>
 
                 <div class="card-body">
-                    <!-- Displaying Errors -->
+
                     <div id="error-messages" class="alert alert-danger" style="display: none;">
                         <ul id="error-list"></ul>
                     </div>
@@ -107,32 +104,37 @@
 
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="bus_name" class="form-label">{{ __('Bus Name') }}</label>
+                                <label for="bus_name" class="form-label">{{ ('Bus Name') }}</label>
                                 <input id="bus_name" type="text" class="form-control" name="bus_name" value="{{ old('bus_name', $bus->bus_name) }}" required autofocus>
                             </div>
 
                             <div class="col-md-6">
-                                <label for="total_seat" class="form-label">{{ __('Total Seats') }}</label>
+                                <label for="total_seat" class="form-label">{{ ('Total Seats') }}</label>
                                 <input id="total_seat" type="number" class="form-control" name="total_seat" value="{{ old('total_seat', $bus->total_seat) }}" required>
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="from" class="form-label">{{ __('From') }}</label>
+                                <label for="from" class="form-label">{{ ('From') }}</label>
                                 <input id="from" type="text" class="form-control" name="from" value="{{ old('from', $bus->from) }}" required>
                             </div>
 
                             <div class="col-md-6">
-                                <label for="to" class="form-label">{{ __('To') }}</label>
+                                <label for="to" class="form-label">{{ ('To') }}</label>
                                 <input id="to" type="text" class="form-control" name="to" value="{{ old('to', $bus->to) }}" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="price" class="form-label">{{ ('Price') }}</label>
+                                <input id="price" type="text" class="form-control" name="price" value="{{ old('price', $bus->price) }}" required>
                             </div>
                         </div>
 
                         <div class="row mb-0">
                             <div class="col-md-8 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
-                                    {{ __('Update Bus') }}
+                                    {{ ('Update Bus') }}
                                 </button>
                             </div>
                         </div>
@@ -146,13 +148,13 @@
 <script>
     $(document).ready(function() {
         $('#busForm').on('submit', function(e) {
-            e.preventDefault();  // Prevent normal form submission
+            e.preventDefault();
 
-            // Clear any previous error messages
+
             $('#error-messages').hide();
             $('#error-list').empty();
 
-            var formData = $(this).serialize();  // Serialize form data
+            var formData = $(this).serialize();
 
             $.ajax({
                 url: $(this).attr('action'),
@@ -160,13 +162,13 @@
                 data: formData,
                 success: function(response) {
                     if (response.success) {
-                        // Handle successful form submission
+
                         alert('Bus details updated successfully!');
-                        window.location.href = '{{ route('bus.view') }}';  // Redirect after success
+                        window.location.href = '{{ route('bus.view') }}';
                     }
                 },
                 error: function(xhr) {
-                    // If there are validation errors, show them
+
                     var errors = xhr.responseJSON.errors;
                     if (errors) {
                         $('#error-messages').show();

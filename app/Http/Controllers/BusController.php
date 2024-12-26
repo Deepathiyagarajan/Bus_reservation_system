@@ -19,8 +19,8 @@ class BusController extends Controller
             'bus_name' => 'required|string|max:255',
             'available_seats' => 'required|integer|min:1',
             'from' => 'required',
+            'price' => 'required',
         ]);
-        // dd('haii');
 
         DB::table('bus_name')->insert([
             'bus_name' => $request->bus_name,
@@ -28,15 +28,16 @@ class BusController extends Controller
             'total_seat' => $request->available_seats,
             'from' => $request->from,
             'to' => $request->to_address,
+            'price'=> $request->price,
         ]);
 
         return redirect()->route('home')->with('success', 'Bus added successfully!');
     }
-    public function view_booking(Request $request)
-    {
-        $booking_details = DB::table('user_booking_details')->where('user_id', (Auth::id()))->get();
-        return view('home',compact('booking_details'));
-    }
+    // public function view_booking(Request $request)
+    // {
+    //     $booking_details = DB::table('user_booking_details')->where('user_id', (Auth::id()))->get();
+    //     return view('home',compact('booking_details'));
+    // }
 
     public function view_buses(Request $request)
     {
@@ -60,7 +61,6 @@ class BusController extends Controller
     public function edit_bus($id)
     {
         $bus = DB::table('bus_name')->where('id', $id)->first();
-        // dd($bus);
         if (!$bus) {
             return redirect()->route('bus.view')->with('error', 'Bus not found.');
         }
@@ -70,12 +70,12 @@ class BusController extends Controller
 
     public function update_bus(Request $request, $id)
     {
-        // dd($request->all());
         $validatedData = $request->validate([
             'bus_name' => 'required|string|max:255',
             'total_seat' => 'required|integer|min:1',
             'from' => 'required',
             'to' => 'required',
+            'price' => 'required',
         ]);
 
         try {
@@ -86,18 +86,18 @@ class BusController extends Controller
                     'total_seat' => $validatedData['total_seat'],
                     'from' => $request->from,
                     'to' => $request->to,
+                    'price' => $request->price,
                 ]);
-        } catch (\Exception $e) {
-            dd($e->getMessage());
-        }
+            } catch (\Exception $e) {
+                dd($e->getMessage());
+            }
 
+            return redirect()->route('bus.view')->with('success', 'Bus details updated successfully!');
 
-        return redirect()->route('bus.view')->with('success', 'Bus details updated successfully!');
     }
 
     public function showBusList(Request $request)
     {
-        // dd($request->all());
         $date = $request->journey_date;
         $buses = DB::table('bus_name')->get();
         return view('bus.book', compact('buses','date'));
@@ -105,13 +105,13 @@ class BusController extends Controller
 
     public function selectBusForBooking(Request $request ,$id)
     {
-        // Fetch bus data from the database
-        // dd($request->all());
+
 
         $date = $request->journey_date;
         $bus = DB::table('bus_name')->where('id', $id)->first();
         $available_seat = DB::table('user_booking_details')->where('bus_id', $id)->where('booking_date',$date)->sum('ticket_count');
         $available_seat =(($bus->total_seat)- $available_seat);
+        
 
         if (!$bus) {
             return redirect()->route('bus.list')->with('error', 'Bus not found.');
@@ -121,77 +121,49 @@ class BusController extends Controller
     }
 
     public function submitBooking(Request $request)
-{
-    // Validate request data
-    $validatedData = $request->validate([
-        'ticket_count' => 'required|integer',
-        'user_name' => 'required|string',
-        'email' => 'required|email',
-        'mobile_number' => 'required|string',
-        'gender' => 'required|string',
-        'bus_id' => 'required|integer', // Ensure bus_id is required and validated
-        'date' => 'required|date'  // Validate booking date
-    ]);
+    {
+        $validatedData = $request->validate([
+            'ticket_count' => 'required|integer',
+            'user_name' => 'required|string',
+            'email' => 'required|email',
+            'mobile_number' => 'required|string',
+            'gender' => 'required|string',
 
-    // Get the bus_id from the request
-    $busId = $validatedData['bus_id'];
-
-    // Get bus information
-    $bus = DB::table('bus_name')->where('id', $busId)->first();
-
-    if (!$bus) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Bus not found!'
+            'id' => 'required',
         ]);
+
+        DB::table('user_booking_details')->insert([
+            'bus_name' => $request->bus_name,
+            'ticket_count' => $request->ticket_count,
+            'user_name' => $request->user_name,
+            'email' => $request->email,
+            'mobile_number' => $request->mobile_number,
+            'gender' => $request->gender,
+
+            'bus_id' => $request->id,
+            'booking_date' => $request->date,
+            'user_id' => Auth::id(),
+            // 'created_at' => now(),
+            // 'updated_at' => now(),
+        ]);
+
+        DB::table('bus_name')
+            ->where('id', $validatedData['id'])
+            ->decrement('available_seat', $validatedData['ticket_count']);
+
+        return redirect()->route('home')->with('success', 'Booking successful!');
     }
 
-    // Calculate available seats
-    $availableSeats = DB::table('user_booking_details')
-        ->where('bus_id', $busId)
-        ->where('booking_date', $validatedData['date'])
-        ->sum('ticket_count');
 
-    $availableSeats = $bus->total_seat - $availableSeats;
+    public function getBookingDetails(Request $request)
+    {
+        $bookingDetails = DB::table('user_booking_details')
+            ->select(['user_name', 'bus_name', 'ticket_count', 'booking_date']);
+            // ->where('user_id', Auth::id());
 
-    // Check if enough seats are available
-    if ($availableSeats < $validatedData['ticket_count']) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Not enough available seats.'
-        ]);
+        return datatables()->of($bookingDetails)
+            ->addIndexColumn()
+            ->make(true);
     }
-
-    // Store booking details
-    $booking = DB::table('user_booking_details')->insertGetId([
-        'bus_name' => $request->bus_name,
-        'ticket_count' => $validatedData['ticket_count'],
-        'user_name' => $validatedData['user_name'],
-        'email' => $validatedData['email'],
-        'mobile_number' => $validatedData['mobile_number'],
-        'gender' => $validatedData['gender'],
-        'bus_id' => $busId,
-        'booking_date' => $validatedData['date'],
-        'user_id' => Auth::id(),
-    ]);
-
-    // Update available seats in bus table
-    DB::table('bus_name')
-        ->where('id', $busId)
-        ->decrement('available_seat', $validatedData['ticket_count']);
-
-    // Get the newly added booking detailss
-    $newBooking = DB::table('user_booking_details')
-        ->where('id', $booking)
-        ->first();
-
-    // Return the new booking as JSON for DataTable update
-    return response()->json([
-        'success' => true,
-        'message' => 'Booking successful!',
-        'booking' => $newBooking
-    ]);
-}
-
 
 }

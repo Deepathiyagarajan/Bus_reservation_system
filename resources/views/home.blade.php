@@ -3,39 +3,152 @@
 @section('content')
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <!-- Include jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-
-    <!-- Include DataTables -->
-    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
-
-    <!-- DataTables Buttons CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css">
-
-    <!-- JS Libraries for PDF & Excel Export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.2.0/jszip.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
     <style>
-        /* Your existing styles */
+        body {
+            background: url('{{ asset('storage/images/Bus-Online-Booking-System.jpg') }}') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Nunito', sans-serif;
+            color: #ffffff;
+        }
+
+        .blur-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            filter: blur(8px);
+            z-index: -1;
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: rgba(63, 114, 175, 0.8);
+            color: #ffffff;
+            text-align: center;
+            font-size: 1.5rem;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .btn {
+            font-size: 1rem;
+            padding: 10px 20px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #3f72af;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #2a4a7f;
+            transform: translateY(-3px);
+        }
+
+        .btn-success {
+            background-color: #6ab04c;
+            border: none;
+        }
+
+        .btn-success:hover {
+            background-color: #4e8e3b;
+            transform: translateY(-3px);
+        }
+
+        .btn-secondary {
+            background-color: #f0ad4e;
+            border: none;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e08533;
+            transform: translateY(-3px);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            border-radius: 30px;
+            padding: 10px 15px;
+            font-size: 1rem;
+            width: 100%;
+            border: 1px solid #ddd;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #3f72af;
+            outline: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            color:black;
+        }
+
+        table th, table td {
+            text-align: left;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #3f72af;
+            color: #fff;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        @media (max-width: 576px) {
+            .card-body {
+                padding: 1.5rem;
+            }
+
+            .btn {
+                font-size: 0.9rem;
+                padding: 8px 16px;
+            }
+
+            .form-control {
+                font-size: 0.9rem;
+                padding: 8px 12px;
+            }
+        }
+
+
+        .dataTables_wrapper{
+            color: black !important;
+        }
+
     </style>
+
+    <div class="blur-background"></div>
 
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-
                     <div class="card-header">
-                        <h3>{{ __('Dashboard') }}</h3>
-                    </div>
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <span>Bus List</span>
-                        <a href="{{ route('home') }}" class="btn btn-danger btn-sm">Back</a>
+                        <h3>{{ ('Dashboard') }}</h3>
                     </div>
 
                     <div class="card-body">
@@ -50,151 +163,112 @@
                             </div>
                         @endif
 
-                        <!-- Search Form (For Journey Date) -->
-                       <form action="{{ route('bus.submitBooking') }}" method="POST" class="text-center" autocomplete="off">
-    @csrf
-    <div class="form-group">
-        <label for="journey_date" class="text-muted">Select Journey Date</label>
-        <input type="text" name="journey_date" id="journey_date"
-            class="form-control flatpickr-input" placeholder="Choose Date" required>
-    </div><br>
-    <button type="submit" class="btn btn-primary">
-        <i class="fas fa-search text-white"> </i> Find Bus
-    </button>
-</form>
-
-
+                        <form action="{{ route('bus.list') }}" method="get" class="text-center" autocomplete="off">
+                            @csrf
+                            <div class="form-group">
+                                <label for="journey_date" class="text-muted">Select Journey Date</label>
+                                <input type="text" name="journey_date" id="journey_date"
+                                    class="form-control flatpickr-input" placeholder="Choose Date" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search text-white"> </i> Find Bus
+                            </button>
+                        </form>
+                        <br>
+                        <div class="filter-container">
+                            <input type="text" id="userFilter" placeholder="Search by name...">
+                            <input type="text" id="busFilter" placeholder="Search by bus name..."><br><br>
+                            <button id="filterBtn" class="btn btn-secondary">Apply Filter</button>
+                            <button id="resetBtn" class="btn btn-primary">Reset Filter</button>
+                        </div>
                         <br>
 
-                        <!-- Filter Form (Separate Filter Button) -->
-                        <div class="text-center mb-3">
-                            <label for="searchFilter">Filter by Name or Bus:</label>
-                            <input type="text" id="searchFilter" class="form-control" placeholder="Search by Name or Bus Name">
-                            <button type="button" class="btn btn-success mt-2" id="filterBtn">
-                                <i class="fas fa-filter"></i> Filter
-                            </button>
-                        </div>
+                        <table id="bookingTable" class="display" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>S No</th>
+                                    <th>Name</th>
+                                    <th>Bus Name</th>
+                                    <th>Tickets Count</th>
+                                    <th>Journey Date</th>
 
-                        <!-- DataTable for booking details -->
-                        @if($booking_details->count() > 0)
-                            <table id="bookingTable" class="display">
-                                <thead>
-                                    <tr>
-                                        <th>S No</th>
-                                        <th>Name</th>
-                                        <th>Bus Name</th>
-                                        <th>Tickets Count</th>
-                                        <th>Journey Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @php $sno = 1; @endphp
-                                    @foreach ($booking_details as $booking_detail)
-                                        <tr>
-                                            <td>{{ $sno++ }}</td>
-                                            <td>{{ $booking_detail->user_name }}</td>
-                                            <td>{{ $booking_detail->bus_name }}</td>
-                                            <td>{{ $booking_detail->ticket_count }}</td>
-                                            <td>{{ $booking_detail->booking_date }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        @else
-                            <p class="text-center mt-4 text-muted">No booking details available.</p>
-                        @endif
+                                </tr>
+                            </thead>
+                        </table>
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        $(document).ready(function() {
-            var table = $('#bookingTable').DataTable({
-                searching: true,  // Enable the built-in search functionality
-                paging: true,     // Enable pagination
-                ordering: true,   // Enable sorting on columns
-                info: true,       // Show table info (e.g., showing x to y of z entries)
 
-                // Add buttons for export functionality
-                dom: 'Bfrtip',  // Specify the position of the buttons
-                buttons: [
-                    {
-                        extend: 'excelHtml5',  // Excel export
-                        title: 'Booking Details',  // Title of the exported file
-                        className: 'btn btn-success'  // Button style
-                    },
-                    {
-                        extend: 'pdfHtml5',  // PDF export
-                        title: 'Booking Details',  // Title of the exported file
-                        className: 'btn btn-danger'  // Button style
-                    }
-                ]
-            });
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 
-            // Apply custom filtering on button click
-            $('#filterBtn').on('click', function() {
-                var filterValue = $('#searchFilter').val();  // Get the value from the filter input field
-                table.search(filterValue).draw();  // Apply the search filter to the table
-            });
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-            // Handling the form submission via AJAX
-            $('form').on('submit', function(e) {
-                e.preventDefault();  // Prevent default form submission
-                var formData = $(this).serialize();  // Serialize the form data
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
 
-                $.ajax({
-                    url: "{{ route('bus.submitBooking') }}",  // Your booking submission route
-                    type: 'POST',
-                    data: formData,
-                    headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')  // CSRF token header
-        },
-                    success: function(response) {
-                        // If booking is successful, update the DataTable
-                        if (response.success) {
-                            // Add the new booking details to the table
-                            table.row.add([
-                                table.rows().count() + 1,  // S No (incremented)
-                                response.booking.user_name,
-                                response.booking.bus_name,
-                                response.booking.ticket_count,
-                                response.booking.booking_date
-                            ]).draw(false);  // Redraw the table without resetting the page
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
 
-                            // Optionally, reset the form
-                            $('form')[0].reset();
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 
-                            // Show a success message
-                            alert('Booking successful!');
-                        } else {
-                            alert('Booking failed. Please try again.');
-                        }
-                    },
-                    error: function(xhr, status, error) {
-            // Handle error
-            console.error(xhr.responseText);  // Log the error response for debugging
-            alert('There was an error. Please try again.');
-        }
-                });
-            });
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        var table = $('#bookingTable').DataTable({
+            processing: true,
+            serverSide: true,
+            // searching:true,
+            ajax: "{{ route('booking.details.ajax') }}",
+            columns: [
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                { data: 'user_name', name: 'user_name' },
+                { data: 'bus_name', name: 'bus_name' },
+                { data: 'ticket_count', name: 'ticket_count' },
+                { data: 'booking_date', name: 'booking_date' },
+
+            ],
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    text: 'Export to Excel',
+                    className: 'btn btn-success export-excel'
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'Export to PDF',
+                    className: 'btn btn-primary export-pdf'
+                }
+            ]
+
         });
-    </script>
 
+        $('#filterBtn').on('click', function () {
+            var userFilter = $('#userFilter').val();
+            var busFilter = $('#busFilter').val();
 
-
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            flatpickr("#journey_date", {
-                dateFormat: "d-m-Y",
-                minDate: "today",
-                allowInput: true
-            });
+            table.column(1).search(userFilter).column(2).search(busFilter).draw();
         });
-           
-    </script>
 
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+        $('#resetBtn').on('click', function () {
+            $('#userFilter').val('');
+            $('#busFilter').val('');
+            table.search('').columns().search('').draw();
+        });
+
+        flatpickr("#journey_date", {
+            dateFormat: "d-m-Y",
+            minDate: "today",
+            allowInput: true
+        });
+    });
+</script>
+
+
 @endsection

@@ -74,6 +74,10 @@
                             <p class="mb-3">
                                 <span class="fw-bold">To:</span> {{ $bus->to }}
                             </p>
+                            <p class="mb-3">
+                                <span class="fw-bold">Ticket Price:</span> {{ $bus->price }}
+                            </p>
+
                             <form action="{{ route('bus.select', $bus->id) }}" method="get">
                                 @csrf
                                 <input type="text" name="journey_date" value="{{ $date }}" hidden>

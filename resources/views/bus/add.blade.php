@@ -100,7 +100,7 @@
                 </div>
 
                 <div class="card-body">
-                    <div id="error-message" class="alert alert-danger" style="display: none;"></div>
+                    
 
                     <form id="busForm" method="POST" autocomplete="off">
                         @csrf
@@ -124,6 +124,13 @@
                             <input type="text" class="form-control" id="to_address" name="to_address" required>
                         </div>
 
+                        <div class="mb-3">
+                            <label for="price" class="form-label">Ticket price</label>
+                            <input type="text" class="form-control" id="price" name="price" required>
+                        </div>
+
+
+
                         <button type="submit" class="btn btn-primary w-100">Add Bus</button>
                     </form>
                 </div>
@@ -134,28 +141,26 @@
 
 <script>
     $(document).ready(function() {
-        // Handle form submission via AJAXx
         $('#busForm').on('submit', function(e) {
             e.preventDefault();
 
-            var formData = new FormData(this); // Collect form data
+            var formData = new FormData(this);
 
             $.ajax({
-                url: '{{ route('bus.store') }}',  // Make sure this route is correct
+                url: '{{ route('bus.store') }}',
                 method: 'POST',
                 data: formData,
                 processData: false,
                 contentType: false,
                 success: function(response) {
                     if (response.success) {
-                        // Redirect to home or show a success message
-                        window.location.href = '{{ route('home') }}'; // Or you can show a message here
+                        window.location.href = '{{ route('home') }}';
                     } else {
                         $('#error-message').text(response.message).show();
                     }
                 },
                 error: function(xhr, status, error) {
-                    // Display server-side validation errors or AJAX errors
+
                     var errors = xhr.responseJSON.errors;
                     var errorMessage = '';
                     $.each(errors, function(key, value) {
