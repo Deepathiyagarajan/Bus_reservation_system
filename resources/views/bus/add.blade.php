@@ -100,7 +100,7 @@
                 </div>
 
                 <div class="card-body">
-                    
+
 
                     <form id="busForm" method="POST" autocomplete="off">
                         @csrf
@@ -174,57 +174,74 @@
 </script>
 
 
-    <script>
-        $(document).ready(function() {
-            $("#busForm").validate({
-                rules: {
-                    bus_name: {
-                        required: true,
-                        minlength: 3
-                    },
-                    available_seats: {
-                        required: true,
-                        min: 1
-                    },
-                    from: {
-                        required: true,
-                        minlength: 3
-                    },
-                    to_address: {
-                        required: true,
-                        minlength: 3
-                    }
+<script>
+    $(document).ready(function() {
+        $("#busForm").validate({
+            rules: {
+                bus_name: {
+                    required: true,
+                    minlength: 3,
+                    pattern: /^[A-Za-z\s]+$/
                 },
-                messages: {
-                    bus_name: {
-                        required: "Please enter the bus name",
-                        minlength: "Bus name must be at least 3 characters long"
-                    },
-                    available_seats: {
-                        required: "Please enter the available seats",
-                        min: "Seats should be at least 1"
-                    },
-                    from: {
-                        required: "Please enter the starting location",
-                        minlength: "Location must be at least 3 characters long"
-                    },
-                    to_address: {
-                        required: "Please enter the destination",
-                        minlength: "Destination must be at least 3 characters long"
-                    }
+                available_seats: {
+                    required: true,
+                    digits: true,
+                    min: 1,
+                    max: 80
                 },
-                errorElement: "div",
-                errorPlacement: function(error, element) {
-                    error.addClass("invalid-feedback");
-                    element.closest(".mb-3").append(error);
+                from: {
+                    required: true,
+                    minlength: 3,
+                    pattern: /^[A-Za-z\s]+$/
                 },
-                highlight: function(element) {
-                    $(element).addClass("is-invalid").removeClass("is-valid");
+                to_address: {
+                    required: true,
+                    minlength: 3,
+                    pattern: /^[A-Za-z\s]+$/
                 },
-                unhighlight: function(element) {
-                    $(element).addClass("is-valid").removeClass("is-invalid");
+                price: {
+                    required: true,
+                    digits:true,
+                    min:100,
+                    max:1000
                 }
-            });
+            },
+            messages: {
+                bus_name: {
+                    required: "Please enter the bus name",
+                    minlength: "Bus name must be at least 3 characters long",
+                    pattern: "Bus name should contain only letters and spaces"
+                },
+                available_seats: {
+                    required: "Please enter the available seats",
+                    digits: "Please enter a valid number",
+                    min: "Seats should be at least 10",
+                    max: "Seats should not exceed 99"
+                },
+                from: {
+                    required: "Please enter the starting location",
+                    minlength: "Location must be at least 3 characters long",
+                    pattern: "Location should contain only letters and spaces"
+                },
+                to_address: {
+                    required: "Please enter the destination",
+                    minlength: "Destination must be at least 3 characters long",
+                    pattern: "Destination should contain only letters and spaces"
+                }
+            },
+            errorElement: "div",
+            errorPlacement: function(error, element) {
+                error.addClass("invalid-feedback");
+                element.closest(".mb-3").append(error);
+            },
+            highlight: function(element) {
+                $(element).addClass("is-invalid").removeClass("is-valid");
+            },
+            unhighlight: function(element) {
+                $(element).addClass("is-valid").removeClass("is-invalid");
+            }
         });
-    </script>
+    });
+</script>
+
 @endsection

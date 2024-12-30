@@ -111,7 +111,7 @@ class BusController extends Controller
         $bus = DB::table('bus_name')->where('id', $id)->first();
         $available_seat = DB::table('user_booking_details')->where('bus_id', $id)->where('booking_date',$date)->sum('ticket_count');
         $available_seat =(($bus->total_seat)- $available_seat);
-        
+
 
         if (!$bus) {
             return redirect()->route('bus.list')->with('error', 'Bus not found.');
@@ -157,13 +157,25 @@ class BusController extends Controller
 
     public function getBookingDetails(Request $request)
     {
+        
         $bookingDetails = DB::table('user_booking_details')
-            ->select(['user_name', 'bus_name', 'ticket_count', 'booking_date']);
-            // ->where('user_id', Auth::id());
+            ->join('bus_name', 'user_booking_details.bus_id', '=', 'bus_name.id')
+            ->select([
+                'user_booking_details.user_name',
+                'bus_name.bus_name',
+                'user_booking_details.ticket_count',
+                'user_booking_details.booking_date',
+                'bus_name.price',
+                DB::raw('bus_name.price * user_booking_details.ticket_count AS total_price')
+            ]);
+            // Optionally, filter by user if needed
+            // ->where('user_booking_details.user_id', Auth::id());
+
 
         return datatables()->of($bookingDetails)
             ->addIndexColumn()
             ->make(true);
     }
+
 
 }

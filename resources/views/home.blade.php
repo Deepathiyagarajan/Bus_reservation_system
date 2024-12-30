@@ -191,6 +191,8 @@
                                     <th>Bus Name</th>
                                     <th>Tickets Count</th>
                                     <th>Journey Date</th>
+                                    <th>Ticket Price</th>
+                                    <th>Total Price</th>
 
                                 </tr>
                             </thead>
@@ -217,6 +219,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 
 <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+
 
 <script>
     $(document).ready(function () {
@@ -231,6 +235,9 @@
                 { data: 'bus_name', name: 'bus_name' },
                 { data: 'ticket_count', name: 'ticket_count' },
                 { data: 'booking_date', name: 'booking_date' },
+                { data: 'price', name: 'price'},
+                { data: 'total_price', name: 'total_price'},
+
 
             ],
             dom: 'Bfrtip',
@@ -269,6 +276,34 @@
         });
     });
 </script>
-
+<script>
+    $(document).ready(function(){
+        $('#journey_date').validate({
+              rules:{
+                 journey_date: {
+                    required:true,
+                    minlength:5
+                 }
+              },
+              messages:{
+                 journey_date: {
+                    required: "Please choose the date",
+                    minlength: "Date must be atleast 6 length"
+                 }
+              },
+              errorElement: "div",
+                errorPlacement: function(error, element) {
+                    error.addClass("invalid-feedback");
+                    element.closest(".mb-3").append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass("is-invalid").removeClass("is-valid");
+                },
+                unhighlight: function(element) {
+                    $(element).addClass("is-valid").removeClass("is-invalid");
+                }
+        });
+    });
+</script>
 
 @endsection

@@ -7,9 +7,6 @@ use App\Http\Controllers\Auth\LoginController;
 
 use App\Http\Controllers\UserController;
 
-
-
-
 Route::get('/', function () {
     return view('auth.login');
 });
@@ -30,11 +27,7 @@ Route::post('/bus/{id}/update', [BusController::class, 'update_bus'])->name('bus
 
 Route::get('/buses', [BusController::class, 'showBusList'])->name('bus.list');
 Route::get('/bus/{id}/select', [BusController::class, 'selectBusForBooking'])->name('bus.select');
-
 Route::post('/bus/book', [BusController::class, 'submitBooking'])->name('bus.submitBooking');
-
-
-
 
 Route::get('/booking-details/ajax', [BusController::class, 'getBookingDetails'])->name('booking.details.ajax');
 
